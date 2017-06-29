@@ -47,3 +47,22 @@ Facts suffer from the same problem as statistics. Very few things in science are
 
 - Can only overwhelm knowledge by generating a huge amount of content
 - Assign ranking based on related idea, not actual idea (i.e. you find the related idea to be “helpful”, not biasing your view on the active idea)
+
+
+## Concepts driving development
+
+Use AI to analyze content from a broad range of sites:
+- **News**: mainstream to independent, across the political spectrum
+- **Scientific sites**: government committees to highly biased corporately sponsored
+- **Government agencies**: particularly offices of statistics
+
+In all cases – diversity will come from a spectrum of content sources
+- **Political**: from far right to far left
+- **Influence**: from highly influenced to independent
+- **Geographical**: global content from unstable and dictatorship to free societies
+
+Use AI to attribute
+- **Sentiment**: based on categorization, is the view in support or against
+- **Bias**: rating of content bias based on known journalistic and linguistic standards – not bias based on partisanship
+- **Frequency**: count the occurance of the categorization
+- **Following**: based on user group and sentiment of that user group to the content
