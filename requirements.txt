@@ -1,0 +1,4 @@
+gensim
+pymongo
+scrapy
+goose-extractor
