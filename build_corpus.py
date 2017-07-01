@@ -5,7 +5,7 @@ import nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 from pymongo import MongoClient
 from deeplearning_settings import GlobalSettings
-
+from bson.objectid import ObjectId
 
 """
 Loads the list of stop words to ignore in the provided page content.
@@ -45,34 +45,42 @@ def worker(identifier, skip, count):
             words = []
             nouns = []
 
-            # Tokenize the content into sentences and put everything into lowercase
-            sentences = nltk.sent_tokenize(page["cleaned_text"].lower())
+            # Check to make sure the page does have cleaned text to analyze. Otherwise we ignore it.
+            if "cleaned_text" in page:
+                # Check to see if this key already exists in the corpus
+                document = corpus_db.find_one({"_id": page["url"]})
 
-            # Go through each sentence and clean/extract words
-            for sentence in sentences:
-                # Tokenize the sentence into words and remove those in the stopwords list
-                tokens = nltk.word_tokenize(sentence)
-                text = [word for word in tokens if word not in stopwords]
-                # Tag each word with it's type (e.g. noun, verb, etc)
-                tagged_text = nltk.pos_tag(text)
+                # If there isn't a document, we process this page as we need to add it
+                if document is None:
+                    # Tokenize the content into sentences and put everything into lowercase
+                    sentences = nltk.sent_tokenize(page["cleaned_text"].lower())
 
-                # Create the list of words and positions
-                for word, tag in tagged_text:
-                    words.append({"word": word, "pos": tag})
+                    # Go through each sentence and clean/extract words
+                    for sentence in sentences:
+                        # Tokenize the sentence into words and remove those in the stopwords list
+                        tokens = nltk.word_tokenize(sentence)
+                        text = [word for word in tokens if word not in stopwords]
+                        # Tag each word with it's type (e.g. noun, verb, etc)
+                        tagged_text = nltk.pos_tag(text)
 
-            # Now that we have the words, we do another pass to get those that are nouns
-            words = [word for word in tag["words"] if word["pos"] in ["NN", "NNS"]]
+                        # Create the list of words and positions
+                        for word, tag in tagged_text:
+                            words.append({"word": word, "pos": tag})
 
-            # Lemmatize the nouns so we have a clean set
-            for word in words:
-                nouns.append(lem.lemmatize(word["word"]))
+                    # Now that we have the words, we do another pass to get those that are nouns
+                    words = [word for word in words if word["pos"] in ["NN", "NNS"]]
 
-            # Once we've processed the sentences in the content into words, we push this back into the corpus db
-            corpus_db.insert({
-                "url": page["url"],
-                "text": page["text"],
-                "words": nouns
-            })
+                    # Lemmatize the nouns so we have a clean set
+                    for word in words:
+                        nouns.append(lem.lemmatize(word["word"]))
+
+                    # Once we've processed the sentences in the content into words, we push this back into the corpus db
+                    corpus_db.insert({
+                        "_id": page["url"],
+                        "url": page["url"],
+                        "text": page["cleaned_text"],
+                        "words": nouns
+                    })
 
             # Check to see if the worker is done and log appropriately
             done += 1
@@ -88,7 +96,7 @@ The entry point for kicking off separate worker tasks to process the page conten
 """
 def main():
     # Download the necessary information needed for gensim
-    nltk.download()
+    # nltk.download()
 
     # Get the count of pages stored in MongoDb
     pages_db = MongoClient(GlobalSettings.MONGO_URI)[GlobalSettings.DATABASE_DOT][GlobalSettings.COLLECTION_PAGES]

@@ -7,18 +7,18 @@ from deeplearning_settings import GlobalSettings
 
 
 class Corpus(object):
-    def __init__(self, cursor, reviews_dictionary, corpus_path):
+    def __init__(self, cursor, pages_dictionary, corpus_path):
         self.cursor = cursor
-        self.reviews_dictionary = reviews_dictionary
+        self.pages_dictionary = pages_dictionary
         self.corpus_path = corpus_path
 
     def __iter__(self):
         self.cursor.rewind()
-        for review in self.cursor:
-            yield self.reviews_dictionary.doc2bow(review["words"])
+        for page in self.cursor:
+            yield self.pages_dictionary.doc2bow(page["words"])
 
     def serialize(self):
-        BleiCorpus.serialize(self.corpus_path, self, id2word=self.reviews_dictionary)
+        BleiCorpus.serialize(self.corpus_path, self, id2word=self.pages_dictionary)
 
         return self
 
@@ -59,7 +59,7 @@ def main():
     lda_num_topics = 50
     lda_model_path = "models/lda_model_50_topics.lda"
 
-    corpus_db = MongoClient(GlobalSettings.MONGO_URI)[GlobalSettings.DATABASE_CORPUS]
+    corpus_db = MongoClient(GlobalSettings.MONGO_URI)[GlobalSettings.DATABASE_DOT][GlobalSettings.COLLECTION_CORPUS]
     corpus_cursor = corpus_db.find()
 
     dictionary = Dictionary(corpus_cursor, dictionary_path).build()
