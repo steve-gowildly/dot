@@ -56,7 +56,7 @@ def main():
 
     dictionary_path = "models/dictionary.dict"
     corpus_path = "models/corpus.lda-c"
-    lda_num_topics = 50
+    lda_num_topics = 100
     lda_model_path = "models/lda_model_50_topics.lda"
 
     corpus_db = MongoClient(GlobalSettings.MONGO_URI)[GlobalSettings.DATABASE_DOT][GlobalSettings.COLLECTION_CORPUS]
