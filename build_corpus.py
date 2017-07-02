@@ -5,7 +5,6 @@ import nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 from pymongo import MongoClient
 from deeplearning_settings import GlobalSettings
-from bson.objectid import ObjectId
 
 """
 Loads the list of stop words to ignore in the provided page content.

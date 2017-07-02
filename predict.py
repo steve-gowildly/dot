@@ -3,6 +3,7 @@ import nltk
 from gensim.models import LdaModel
 from gensim import corpora
 from nltk.stem.wordnet import WordNetLemmatizer
+from deeplearning_settings import GlobalSettings
 
 
 class Predict():
@@ -14,7 +15,7 @@ class Predict():
 
     def load_stopwords(self):
         stopwords = {}
-        with open('stopwords.txt', 'rU') as f:
+        with open(GlobalSettings.DICTIONARY_STOP_WORDS, 'rU') as f:
             for line in f:
                 stopwords[line.strip()] = 1
 
@@ -52,18 +53,14 @@ class Predict():
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-    new_review = "It's like eating with a big Italian family. " \
-                 "Great, authentic Italian food, good advice when asked, and terrific service. " \
-                 "With a party of 9, last minute on a Saturday night, we were sat within 15 minutes. " \
-                 "The owner chatted with our kids, and made us feel at home. " \
-                 "They have meat-filled raviolis, which I can never find. " \
-                 "The Fettuccine Alfredo was delicious. We had just about every dessert on the menu. " \
-                 "The tiramisu had only a hint of coffee, the cannoli was not overly sweet, " \
-                 "and they had this custard with wine that was so strangely good. " \
-                 "It was an overall great experience!"
+    topic_content = "President Donald Trump called out the nearly 30 states expressing concerns about the " \
+                    "legality of his administration's efforts to investigate voter fraud, asking what the " \
+                    "states might be hiding in a tweet Saturday morning. \"Numerous states are refusing to " \
+                    "give information to the very distinguished VOTER FRAUD PANEL. What are they trying to hide,\" " \
+                    "Trump wrote."
 
     predict = Predict()
-    predict.run(new_review)
+    predict.run(topic_content)
 
 
 if __name__ == '__main__':
